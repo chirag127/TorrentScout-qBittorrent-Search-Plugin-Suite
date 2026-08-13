@@ -5,7 +5,7 @@ on:
   pull_request:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: megalinter-${{ github.ref }}
@@ -27,15 +27,6 @@ jobs:
         uses: oxsecurity/megalinter@v8
         env:
           MEGALINTER_FLAVOR: all
-          APPLY_FIXES: all
-          APPLY_FIXES_EVENT: push
-          APPLY_FIXES_MODE: commit
+          DISABLE_ERRORS: true
+          VALIDATE_ALL_CODEBASE: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Commit and push applied fixes
-        if: steps.ml.outputs.has_updated_sources == 1 && github.event_name == 'push'
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "ci: apply linters auto-fixes"
-          commit_user_name: megalinter-bot
-          commit_user_email: [email protected]
